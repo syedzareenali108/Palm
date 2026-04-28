@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔮 Qismat Ka Raaz</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --gold:#FFD700; --purple:#1a0533; --light-purple:#6b21a8; --mystic:#e879f9; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--purple); color:#fff; font-family:'Amiri',serif; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 40% 70%,rgba(255,215,0,.6) 0%,transparent 100%),radial-gradient(1px 1px at 60% 20%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 80% 60%,rgba(232,121,249,.8) 0%,transparent 100%),radial-gradient(2px 2px at 50% 50%,rgba(232,121,249,.4) 0%,transparent 100%); background-size:400px 400px; animation:twinkle 4s infinite alternate; pointer-events:none; z-index:0; }
+  @keyframes twinkle { 0%{opacity:.6} 100%{opacity:1} }
+  .container { max-width:480px; margin:0 auto; padding:20px 16px 60px; position:relative; z-index:1; }
+  .header { text-align:center; padding:30px 0 20px; }
+  .crystal-ball { font-size:64px; display:block; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 20px var(--mystic)); }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .app-title { font-family:'Cinzel Decorative',cursive; font-size:22px; color:var(--gold); text-shadow:0 0 20px var(--gold); margin-top:12px; }
+  .app-subtitle { font-size:14px; color:rgba(255,255,255,.6); margin-top:6px; font-style:italic; }
+  .divider { display:flex; align-items:center; gap:10px; margin:16px 0; }
+  .divider::before,.divider::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .divider span { color:var(--gold); }
+  .upload-card { background:linear-gradient(135deg,rgba(45,10,78,.9),rgba(26,5,51,.95)); border:2px solid rgba(255,215,0,.3); border-radius:20px; padding:24px; text-align:center; box-shadow:0 0 30px rgba(107,33,168,.4); }
+  .upload-label { display:block; cursor:pointer; }
+  .upload-icon { font-size:50px; display:block; margin-bottom:12px; animation:pulse-icon 2s ease-in-out infinite; }
+  @keyframes pulse-icon { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  .upload-text { font-size:16px; color:var(--gold); font-weight:700; display:block; margin-bottom:6px; }
+  .upload-hint { font-size:12px; color:rgba(255,255,255,.5); display:block; }
+  input[type="file"] { display:none; }
+  .preview-container { display:none; margin-top:16px; position:relative; }
+  .preview-container.show { display:block; }
+  .preview-img { width:100%; max-height:280px; object-fit:cover; border-radius:16px; border:2px solid rgba(255,215,0,.4); box-shadow:0 0 25px rgba(232,121,249,.3); }
+  .scan-line { position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--mystic),transparent); display:none; animation:scan 2s linear infinite; box-shadow:0 0 10px var(--mystic); border-radius:2px; }
+  .scan-line.active { display:block; }
+  @keyframes scan { 0%{top:0;opacity:1} 100%{top:100%;opacity:.3} }
+  .read-btn { width:100%; padding:16px; margin-top:20px; background:linear-gradient(135deg,#7c3aed,#a855f7); border:2px solid var(--gold); border-radius:14px; color:var(--gold); font-family:'Cinzel Decorative',cursive; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 0 20px rgba(168,85,247,.4); display:none; transition:all .3s; }
+  .read-btn.show { display:block; }
+  .read-btn:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(168,85,247,.7); }
+  .read-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+  .loading-section { display:none; text-align:center; padding:30px 20px; }
+  .loading-section.show { display:block; }
+  .loading-orb { width:80px; height:80px; border-radius:50%; background:radial-gradient(circle at 30% 30%,var(--mystic),var(--light-purple),var(--purple)); margin:0 auto 20px; animation:orb-pulse 1.5s ease-in-out infinite; box-shadow:0 0 30px var(--mystic); }
+  @keyframes orb-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1);box-shadow:0 0 50px var(--mystic)} }
+  .loading-text { color:var(--gold); font-size:16px; font-style:italic; animation:fade-text 1.5s ease-in-out infinite; }
+  @keyframes fade-text { 0%,100%{opacity:.6} 50%{opacity:1} }
+  .result-section { display:none; margin-top:20px; }
+  .result-section.show { display:block; animation:fadeInUp .6s ease; }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  .result-card { background:linear-gradient(135deg,rgba(45,10,78,.95),rgba(26,5,51,.98)); border:1px solid rgba(255,215,0,.4); border-radius:20px; padding:24px; box-shadow:0 0 40px rgba(107,33,168,.5); }
+  .result-header { text-align:center; margin-bottom:20px; }
+  .result-header .emoji { font-size:40px; display:block; margin-bottom:8px; }
+  .result-title { font-family:'Cinzel Decorative',cursive; color:var(--gold); font-size:16px; }
+  .stars { color:var(--gold); font-size:20px; display:block; text-align:center; margin:12px 0; letter-spacing:4px; }
+  .result-text { line-height:2; font-size:16px; color:rgba(255,255,255,.95); direction:rtl; text-align:right; white-space:pre-wrap; border-top:1px solid rgba(255,215,0,.2); padding-top:16px; }
+  .lucky-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+  .lucky-item { background:rgba(255,215,0,.08); border:1px solid rgba(255,215,0,.25); border-radius:12px; padding:12px; text-align:center; }
+  .lucky-label { font-size:10px; color:rgba(255,255,255,.5); letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .lucky-value { font-size:18px; color:var(--gold); font-weight:700; display:block; }
+  .reset-btn { width:100%; padding:12px; margin-top:16px; background:transparent; border:1px solid rgba(255,255,255,.2); border-radius:12px; color:rgba(255,255,255,.6); font-family:'Amiri',serif; font-size:14px; cursor:pointer; transition:all .3s; }
+  .reset-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .error-box { background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.4); border-radius:12px; padding:14px; color:#fca5a5; font-size:13px; text-align:center; display:none; margin-top:12px; white-space:pre-wrap; line-height:1.8; }
+  .error-box.show { display:block; }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <span class="crystal-ball">🔮</span>
+    <h1 class="app-title">Qismat Ka Raaz</h1>
+    <p class="app-subtitle">Apne haath ki taqdeer jaanein</p>
+  </div>
+  <div class="divider"><span>✦</span></div>
+  <div class="upload-card">
+    <label class="upload-label" for="handPhoto">
+      <span class="upload-icon">🖐️</span>
+      <span class="upload-text">Apne haath ki tasweer upload karein</span>
+      <span class="upload-hint">JPG, PNG • Seedha haath camera ke saamne rakhein</span>
+    </label>
+    <input type="file" id="handPhoto" accept="image/*">
+    <div class="preview-container" id="previewContainer">
+      <img id="previewImg" class="preview-img" src="" alt="Hand">
+      <div class="scan-line" id="scanLine"></div>
+    </div>
+  </div>
+  <div class="error-box" id="errorBox"></div>
+  <button class="read-btn" id="readBtn" onclick="readPalm()">✨ Qismat Padhein ✨</button>
+  <div class="loading-section" id="loadingSection">
+    <div class="loading-orb"></div>
+    <p class="loading-text">🌟 Sitaare parh rahe hain aapki taqdeer... 🌟</p>
+  </div>
+  <div class="result-section" id="resultSection">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="emoji">🔮</span>
+        <span class="result-title">Aapki Taqdeer</span>
+        <span class="stars">★★★★★</span>
+      </div>
+      <div class="result-text" id="resultText"></div>
+      <div class="lucky-grid" id="luckyGrid"></div>
+    </div>
+    <button class="reset-btn" onclick="resetApp()">🔄 Dobara Try Karein</button>
+  </div>
+  
+</div>
+<script>
+const API_KEY = 'AIzaSyAT7YVSHbzybgmj-2ko3dk02gTldr5w6Q8';
+let imageBase64 = '';
+
+document.getElementById('handPhoto').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const src = evt.target.result;
+    // Compress image
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const MAX = 768;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      imageBase64 = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
+    };
+    img.src = src;
+    document.getElementById('previewImg').src = src;
+    document.getElementById('previewContainer').classList.add('show');
+    document.getElementById('readBtn').classList.add('show');
+    document.getElementById('errorBox').classList.remove('show');
+    document.getElementById('resultSection').classList.remove('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+async function readPalm() {
+  if (!imageBase64) { showError('Pehle haath ki photo select karein.'); return; }
+  const btn = document.getElementById('readBtn');
+  btn.disabled = true;
+  document.getElementById('loadingSection').classList.add('show');
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('errorBox').classList.remove('show');
+  document.getElementById('scanLine').classList.add('active');
+
+  try {
+    const res = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + API_KEY,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: 'image/jpeg', data: imageBase64 } },
+              { text: 'You are a palm reader. Analyze this hand. Return ONLY a JSON object (no markdown, no backticks): {"reading":"150 word Urdu script palm reading, poetic and positive","lucky_number":"single digit","lucky_color":"Urdu word","lucky_day":"Urdu day name","life_score":"XX%"}' }
+            ]
+          }],
+          generationConfig: { temperature: 0.9, maxOutputTokens: 600 }
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      const msg = data?.error?.message || 'Unknown error';
+      if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED')) throw new Error('QUOTA');
+      if (msg.includes('key') || msg.includes('API_KEY')) throw new Error('KEY');
+      throw new Error(msg);
+    }
+
+    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('FORMAT');
+    const result = JSON.parse(match[0]);
+
+    document.getElementById('resultText').textContent = result.reading || 'Aapki qismat chamakdar hai!';
+    document.getElementById('luckyGrid').innerHTML = `
+      <div class="lucky-item"><span class="lucky-label">Lucky Number</span><span class="lucky-value">🔢 ${result.lucky_number||'7'}</span></div>
+      <div class="lucky-item"><span class="lucky-label">Lucky Color</span><span class="lucky-value">🎨 ${result.lucky_color||'نیلا'}</span></div>
+      <div class="lucky-item"><span class="lucky-label">Lucky Day</span><span class="lucky-value">📅 ${result.lucky_day||'جمعہ'}</span></div>
+      <div class="lucky-item"><span class="lucky-label">Life Score</span><span class="lucky-value">⭐ ${result.life_score||'85%'}</span></div>`;
+    document.getElementById('resultSection').classList.add('show');
+
+  } catch(err) {
+    let msg = '❌ Kuch masla aaya. Dobara try karein.';
+    if (err.message === 'QUOTA') msg = '❌ API limit khatam ho gayi.\nKal dobara try karein.';
+    else if (err.message === 'KEY') msg = '❌ API Key kaam nahi kar rahi.\nAI Studio se check karein.';
+    else if (err.message === 'FORMAT') msg = '⚠️ AI ne jawab nahi diya.\nDobara try karein.';
+    else if (err.message.includes('fetch') || err.message.includes('network')) msg = '❌ Internet check karein.';
+    showError(msg);
+  } finally {
+    document.getElementById('loadingSection').classList.remove('show');
+    document.getElementById('scanLine').classList.remove('active');
+    btn.disabled = false;
+  }
+}
+
+function showError(msg) {
+  const e = document.getElementById('errorBox');
+  e.textContent = msg;
+  e.classList.add('show');
+}
+
+function resetApp() {
+  document.getElementById('handPhoto').value = '';
+  document.getElementById('previewContainer').classList.remove('show');
+  document.getElementById('readBtn').classList.remove('show');
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('errorBox').classList.remove('show');
+  imageBase64 = '';
+}
+</script>
+</body>
+</html>
